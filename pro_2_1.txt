@@ -1,0 +1,312 @@
+
+Drop table User;
+Drop table Comment;
+Drop table Friend;
+Drop table Follows;
+Drop table Likes;
+Drop type  FollowsType;
+Drop type  LikesType;
+Drop type  CommentType;
+Drop type  FriendType;
+Drop type  UserTYPE;
+
+
+
+CREATE Type "cseteam28".UserType AS(
+UserId INTEGER,
+UserName CHAR(20)
+--PRIMARY KEY(UserID)
+) MODE DB2SQL;
+
+CREATE Type "cseteam28".CommentType AS(
+CommentId INTEGER,
+CommentDate Date,
+--CommentContent CHAR(100),
+CommentAuthor REF("cseteam28".UserType),
+CommentTo REF("cseteam28".CommentType)
+--PRIMARY KEY(CommentID)
+) MODE DB2SQL;
+
+CREATE Type "cseteam28".FriendType AS(
+User1 REF("cseteam28".UserType),
+User2 REF("cseteam28".UserType)
+) MODE DB2SQL;
+
+CREATE Type "cseteam28".FollowsType AS(
+User REF("cseteam28".UserType),
+Follower REF("cseteam28".UserType)
+) MODE DB2SQL;
+
+CREATE Type "cseteam28".LikesType AS(
+LikesDate Date,
+User REF("cseteam28".UserType),
+Comment REF("cseteam28".CommentType)
+) MODE DB2SQL;
+
+CREATE TABLE User OF "cseteam28".UserType
+(REF IS Oid USER GENERATED);
+
+CREATE TABLE Comment OF "cseteam28".CommentType
+(REF IS Oid USER GENERATED,
+ CommentAuthor WITH OPTIONS SCOPE User,
+ CommentTo WITH OPTIONS SCOPE Comment);
+ 
+CREATE TABLE Friend OF "cseteam28".FriendType
+(REF IS Oid USER GENERATED,
+ User1 WITH OPTIONS SCOPE User,
+ User2 WITH OPTIONS SCOPE User);
+ 
+CREATE TABLE Follows OF "cseteam28".FollowsType
+(REF IS Oid USER GENERATED,
+ User WITH OPTIONS SCOPE User,
+ Follower WITH OPTIONS SCOPE User);
+ 
+CREATE TABLE Likes OF "cseteam28".LikesType
+(REF IS Oid USER GENERATED,
+ User WITH OPTIONS SCOPE User,
+ Comment WITH OPTIONS SCOPE Comment);
+ 
+INSERT INTO User(Oid,UserId,UserName)
+VALUES("cseteam28".UserType('1'),1001,'Alice');
+INSERT INTO User(Oid,UserId,UserName)
+VALUES("cseteam28".UserType('2'),1002,'Bob');
+INSERT INTO User(Oid,UserId,UserName)
+VALUES("cseteam28".UserType('3'),1003,'Candy');
+INSERT INTO User(Oid,UserId,UserName)
+VALUES("cseteam28".UserType('4'),1004,'Dennis');
+INSERT INTO User(Oid,UserId,UserName)
+VALUES("cseteam28".UserType('5'),1005,'Edison');
+INSERT INTO User(Oid,UserId,UserName)
+VALUES("cseteam28".UserType('6'),1006,'Faye');
+
+INSERT INTO Comment(Oid,CommentId,CommentDate,CommentAuthor,CommentTo)
+VALUES("cseteam28".CommentType('1'),2001,'03-18-2012',"cseteam28".UserType('4'),null);
+INSERT INTO Comment(Oid,CommentId,CommentDate,CommentAuthor,CommentTo)
+VALUES("cseteam28".CommentType('2'),2002,'2012-03-18',"cseteam28".UserType('1'),null);
+INSERT INTO Comment(Oid,CommentId,CommentDate,CommentAuthor,CommentTo)
+VALUES("cseteam28".CommentType('3'),2003,'2012-03-16',"cseteam28".UserType('3'),null);
+INSERT INTO Comment(Oid,CommentId,CommentDate,CommentAuthor,CommentTo)
+VALUES("cseteam28".CommentType('4'),2004,'2012-03-22',"cseteam28".UserType('2'),null);
+INSERT INTO Comment(Oid,CommentId,CommentDate,CommentAuthor,CommentTo)
+VALUES("cseteam28".CommentType('5'),2005,'2012-03-23',"cseteam28".UserType('4'),null);
+INSERT INTO Comment(Oid,CommentId,CommentDate,CommentAuthor,CommentTo)
+VALUES("cseteam28".CommentType('6'),2006,'2012-03-23',"cseteam28".UserType('4'),null);
+INSERT INTO Comment(Oid,CommentId,CommentDate,CommentAuthor,CommentTo)
+VALUES("cseteam28".CommentType('7'),2007,'2012-03-19',"cseteam28".UserType('5'),"cseteam28".CommentType('2'));
+INSERT INTO Comment(Oid,CommentId,CommentDate,CommentAuthor,CommentTo)
+VALUES("cseteam28".CommentType('8'),2008,'2012-03-22',"cseteam28".UserType('3'),"cseteam28".CommentType('7'));
+INSERT INTO Comment(Oid,CommentId,CommentDate,CommentAuthor,CommentTo)
+VALUES("cseteam28".CommentType('9'),2009,'2012-03-23',"cseteam28".UserType('1'),"cseteam28".CommentType('4'));
+INSERT INTO Comment(Oid,CommentId,CommentDate,CommentAuthor,CommentTo)
+VALUES("cseteam28".CommentType('10'),2010,'2012-03-24',"cseteam28".UserType('2'),"cseteam28".CommentType('9'));
+INSERT INTO Comment(Oid,CommentId,CommentDate,CommentAuthor,CommentTo)
+VALUES("cseteam28".CommentType('11'),2011,'2012-03-23',"cseteam28".UserType('6'),"cseteam28".CommentType('5'));
+INSERT INTO Comment(Oid,CommentId,CommentDate,CommentAuthor,CommentTo)
+VALUES("cseteam28".CommentType('12'),2012,'2012-03-23',"cseteam28".UserType('4'),"cseteam28".CommentType('6'));
+
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('1'),"cseteam28".UserType('1'),"cseteam28".UserType('3'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('2'),"cseteam28".UserType('1'),"cseteam28".UserType('4'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('3'),"cseteam28".UserType('2'),"cseteam28".UserType('3'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('4'),"cseteam28".UserType('3'),"cseteam28".UserType('1'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('5'),"cseteam28".UserType('3'),"cseteam28".UserType('2'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('6'),"cseteam28".UserType('3'),"cseteam28".UserType('4'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('7'),"cseteam28".UserType('3'),"cseteam28".UserType('6'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('8'),"cseteam28".UserType('4'),"cseteam28".UserType('1'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('9'),"cseteam28".UserType('4'),"cseteam28".UserType('3'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('10'),"cseteam28".UserType('4'),"cseteam28".UserType('5'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('11'),"cseteam28".UserType('4'),"cseteam28".UserType('6'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('12'),"cseteam28".UserType('5'),"cseteam28".UserType('4'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('13'),"cseteam28".UserType('5'),"cseteam28".UserType('6'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('14'),"cseteam28".UserType('6'),"cseteam28".UserType('3'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('15'),"cseteam28".UserType('6'),"cseteam28".UserType('4'));
+INSERT INTO Friend(Oid,User1,User2)
+VALUES("cseteam28".FriendType('16'),"cseteam28".UserType('6'),"cseteam28".UserType('5'));
+
+INSERT INTO Follows(Oid,User,Follower)
+VALUES("cseteam28".FollowsType('1'),"cseteam28".UserType('2'),"cseteam28".UserType('1'));
+INSERT INTO Follows(Oid,User,Follower)
+VALUES("cseteam28".FollowsType('2'),"cseteam28".UserType('6'),"cseteam28".UserType('2'));
+INSERT INTO Follows(Oid,User,Follower)
+VALUES("cseteam28".FollowsType('3'),"cseteam28".UserType('4'),"cseteam28".UserType('3'));
+INSERT INTO Follows(Oid,User,Follower)
+VALUES("cseteam28".FollowsType('4'),"cseteam28".UserType('5'),"cseteam28".UserType('3'));
+INSERT INTO Follows(Oid,User,Follower)
+VALUES("cseteam28".FollowsType('5'),"cseteam28".UserType('1'),"cseteam28".UserType('4'));
+INSERT INTO Follows(Oid,User,Follower)
+VALUES("cseteam28".FollowsType('6'),"cseteam28".UserType('2'),"cseteam28".UserType('4'));
+INSERT INTO Follows(Oid,User,Follower)
+VALUES("cseteam28".FollowsType('7'),"cseteam28".UserType('5'),"cseteam28".UserType('4'));
+INSERT INTO Follows(Oid,User,Follower)
+VALUES("cseteam28".FollowsType('8'),"cseteam28".UserType('1'),"cseteam28".UserType('5'));
+INSERT INTO Follows(Oid,User,Follower)
+VALUES("cseteam28".FollowsType('9'),"cseteam28".UserType('3'),"cseteam28".UserType('6'));
+
+INSERT INTO Likes(Oid,LikesDate,User,Comment)
+VALUES("cseteam28".LikesType('1'),'2012-03-20',"cseteam28".UserType('5'),"cseteam28".CommentType('2'));
+INSERT INTO Likes(Oid,LikesDate,User,Comment)
+VALUES("cseteam28".LikesType('2'),'2012-03-21',"cseteam28".UserType('6'),"cseteam28".CommentType('2'));
+INSERT INTO Likes(Oid,LikesDate,User,Comment)
+VALUES("cseteam28".LikesType('3'),'2012-03-19',"cseteam28".UserType('2'),"cseteam28".CommentType('6'));
+INSERT INTO Likes(Oid,LikesDate,User,Comment)
+VALUES("cseteam28".LikesType('4'),'2012-03-21',"cseteam28".UserType('6'),"cseteam28".CommentType('6'));
+INSERT INTO Likes(Oid,LikesDate,User,Comment)
+VALUES("cseteam28".LikesType('5'),'2012-03-16',"cseteam28".UserType('1'),"cseteam28".CommentType('3'));
+INSERT INTO Likes(Oid,LikesDate,User,Comment)
+VALUES("cseteam28".LikesType('6'),'2012-03-16',"cseteam28".UserType('5'),"cseteam28".CommentType('3'));
+INSERT INTO Likes(Oid,LikesDate,User,Comment)
+VALUES("cseteam28".LikesType('7'),'2012-03-17',"cseteam28".UserType('2'),"cseteam28".CommentType('3'));
+INSERT INTO Likes(Oid,LikesDate,User,Comment)
+VALUES("cseteam28".LikesType('8'),'2012-03-24',"cseteam28".UserType('4'),"cseteam28".CommentType('4'));
+INSERT INTO Likes(Oid,LikesDate,User,Comment)
+VALUES("cseteam28".LikesType('9'),'2012-03-23',"cseteam28".UserType('2'),"cseteam28".CommentType('9'));
+INSERT INTO Likes(Oid,LikesDate,User,Comment)
+VALUES("cseteam28".LikesType('10'),'2012-03-25',"cseteam28".UserType('1'),"cseteam28".CommentType('10'));
+
+--SELECT C1->CommentAuthor.UserName, C2->CommentAuthor.UserName
+--FROM Comment C1, Comment C2
+--WHERE C1->CommentTo.CommentId=C2.CommentId 
+
+
+/*1. Find all pairs of users such that user 1 either commented on a post of user 2 or is a follower of user 2.*/
+
+--Query 1
+SELECT U1.UserName,U2.UserName
+FROM Follows F, User U1,User U2
+WHERE U2.UserName=F.User->UserName AND
+      U1.UserName=F.Follower->UserName AND
+      U1.UserId<>U2.UserId
+UNION 
+SELECT U1.UserName,U2.UserName
+FROM Comment C, User U1,User U2
+WHERE C.CommentAuthor->UserName=U1.UserName AND 
+      C.CommentTo->CommentAuthor->UserName=U2.UserName AND
+      U1.UserId<>U2.UserId;
+
+/*2. Like the previous query but, in addition, both users in the pairs in question must have liked a post made by some other, third user.*/
+
+--Query 2
+(SELECT U1.UserName,U2.UserName
+ FROM Follows F, User U1,User U2
+ WHERE U2.UserName=F.User->UserName AND
+       U1.UserName=F.Follower->UserName AND
+       U1.UserId<>U2.UserId
+ UNION 
+ SELECT U1.UserName,U2.UserName
+ FROM Comment C, User U1,User U2
+ WHERE C.CommentAuthor->UserName=U1.UserName AND 
+       C.CommentTo->CommentAuthor->UserName=U2.UserName AND
+       U1.UserId<>U2.UserId)
+INTERSECT
+SELECT U1.UserName,U2.UserName
+FROM Likes L1, Likes L2, User U1,User U2
+WHERE L1.Comment->CommentId=L2.Comment->CommentId AND
+      L1.User->UserName=U1.Username AND
+      L2.User->UserName=U2.UserName AND
+      U1.UserId<>U2.UserId;
+      
+/*3. Find all users who commented on a post of another user and they did not state that they liked that post prior to commenting.*/
+
+--Query 3
+(SELECT U.UserName
+ FROM User U, Comment C
+ WHERE C.CommentAuthor->UserId=U.UserId AND
+      C.CommentTo->CommentAuthor->UserId<>U.UserId)
+
+INTERSECT
+SELECT U1.Username
+FROM User U1
+WHERE U1.UserId NOT IN
+(SELECT U2.UserId
+ FROM User U2, Comment C2, Likes L
+ WHERE C2.CommentAuthor->UserId=U2.UserId AND
+       L.User->UserId=U2.UserId AND
+       C2.CommentTo->CommentId=L.Comment->CommentId AND
+       L.LikesDate<C2.CommentDate);
+       
+
+/*4. Find all users who did not state that they like any of the posts made by any of their friends. That is, the requisite users didn't like any of their friends' posts (at least, they did not 
+
+bother to click the \like" button).*/
+
+--Query 4
+SELECT U.UserName
+FROM User U
+WHERE U.UserId NOT IN
+(SELECT U2.UserId
+ FROM User U2, Likes L, Friend F
+ WHERE L.User->UserName=U2.UserName AND
+       F.User1->UserName=U2.UserName AND
+       L.Comment->CommentAuthor->UserId=F.User2->UserId);
+
+/*5.  Find all instances of indirect following as follows: y is an indirect follower of x iff there is a chain x=a0,a1,...,an-1,an=y,where n>0, such that each ai+1 follows ai but is not a friend of 
+
+ai.The answer must be a set of all pairs (y,x) such that y is an indirect follower of x.*/
+
+--Query 5
+WITH follower_chain (users,follower,name1,name2) AS
+(SELECT Fol.User->UserId,Fol.Follower->UserId,Fol.User->UserName,Fol.Follower->UserName
+FROM Follows Fol
+WHERE  Fol.Follower->UserId NOT IN
+       (SELECT Fri.User2->UserId
+        FROM  Friend Fri
+        WHERE Fri.User1->UserId=Fol.User->UserId)
+UNION ALL
+SELECT Fol3.User->UserId,Fol2.follower,Fol3.User->UserName,Fol2.name2
+FROM  Follows Fol3,follower_chain Fol2
+WHERE Fol2.users=Fol3.Follower->UserId AND
+      Fol3.Follower->UserId NOT IN
+      (SELECT Fri2.User2->UserId
+       FROM Friend Fri2
+       WHERE Fri2.User1->UserId=Fol3.User->UserId))
+SELECT name2,name1
+FROM follower_chain;
+
+/*6. Same as in the previous query but, in addition, for each 0<=i < n there is no post that ai, ai+1 both liked.*/
+
+WITH follower_chain_no_both (users,follower,name1,name2) AS
+(SELECT Fol.User->UserId,Fol.Follower->UserId,Fol.User->UserName,Fol.Follower->UserName
+FROM Follows Fol
+WHERE  Fol.Follower->UserId NOT IN
+       (SELECT Fri.User2->UserId
+        FROM  Friend Fri
+        WHERE Fri.User1->UserId=Fol.User->UserId) AND
+	Fol.Follower->UserId NOT IN
+	(SELECT	L2.User->UserId
+	 FROM Likes L1, Likes L2
+	 WHERE L1.Comment->CommentId=L2.Comment->CommentId AND
+	       L1.User->UserId<>L2.User->UserId AND
+	       Fol.User->UserId=L1.User->UserId)
+               
+UNION ALL
+SELECT Fol3.User->UserId,Fol2.follower,Fol3.User->UserName,Fol2.name2
+FROM  Follows Fol3,follower_chain_no_both Fol2
+WHERE Fol2.users=Fol3.Follower->UserId AND
+      Fol3.Follower->UserId NOT IN
+      (SELECT Fri2.User2->UserId
+       FROM Friend Fri2
+       WHERE Fri2.User1->UserId=Fol3.User->UserId) AND
+	Fol3.Follower->UserId NOT IN
+	(SELECT	L2.User->UserId
+	 FROM Likes L1, Likes L2
+	 WHERE L1.Comment->CommentId=L2.Comment->CommentId AND
+	       L1.User->UserId<>L2.User->UserId AND
+	       Fol3.User->UserId=L1.User->UserId))
+SELECT name2,name1
+FROM follower_chain_no_both;
+
+
